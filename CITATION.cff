@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this formalization, please cite it as below."
+title: "Explicit disorder thresholds for the coarse-graining cascade of the log-correlated model, formalized in Lean 4"
+type: software
+repository-code: "https://github.com/scottnarmstrong/GMCExplicitDelta"
+abstract: >-
+  A machine-checked Lean 4 and Mathlib formalization of explicit disorder
+  thresholds for the cutoff-uniform coarse-graining cascade of the
+  log-correlated (Gaussian multiplicative chaos) model of a Brownian particle
+  in a log-correlated potential. For d = 2, 3, 4 and every model whose
+  disorder strength satisfies delta <= 0.36665, 0.18870, 0.15698
+  respectively, the normalized defect of the cutoff coefficient on every cube
+  above the cutoff scale is bounded in L^32 by an explicit constant times
+  delta^2, and the expected directional energy by another explicit constant
+  times delta^2, uniformly in the cutoff. The model and its vocabulary are
+  those of the public subdiffusive-process formalization. The library contains
+  no sorry and no custom axiom.
+authors:
+  - family-names: Armstrong
+    given-names: Scott
+  - family-names: Bou-Rabee
+    given-names: Ahmed
+  - family-names: Kuusi
+    given-names: Tuomo
+keywords:
+  - Lean
+  - mathlib
+  - formal verification
+  - homogenization
+  - renormalization
+  - Gaussian multiplicative chaos
+license: Apache-2.0

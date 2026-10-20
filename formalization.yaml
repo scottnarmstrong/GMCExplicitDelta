@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Explicit disorder thresholds for the GMC coarse-graining cascade"
+  description: >-
+    A Lean 4 formalization of explicit disorder thresholds for the
+    cutoff-uniform coarse-graining cascade of the log-correlated (Gaussian
+    multiplicative chaos) model of a Brownian particle in a log-correlated
+    potential, the model of Armstrong, Bou-Rabee and Kuusi formalized in the
+    public subdiffusive-process library. For d = 2, 3, 4 and every model whose
+    disorder strength delta is at most 0.36665, 0.18870 and 0.15698
+    respectively, for every cutoff m, every cube z + Q_n with n >= m and every
+    unit vector e, the normalized defect of the cutoff coefficient is bounded
+    in L^32 by C_32 delta^2 and the expected directional energy by
+    C_mean delta^2, with explicit rational constants, uniformly in the cutoff.
+    The proof separates an analytic part, valid for any row of parameters
+    satisfying a list of numeric conditions, from the verification of these
+    conditions for three certified rows by kernel computation. Built on
+    Mathlib and subdiffusive-process, using only Lean's standard axioms.
+  authors:
+    - "Scott Armstrong"
+    - "Ahmed Bou-Rabee"
+    - "Tuomo Kuusi"
+  responsible_maintainers:
+    - "Ahmed Bou-Rabee"
+    - "Scott Armstrong"
+    - "Tuomo Kuusi"
+  license: "Apache-2.0"
+
+classification:
+  arxiv: ["math.PR", "math.AP"]
+  msc2020: ["60K37", "35R60", "82B28"]
+
+sources:
+  - title: "Anomalous scaling limit of a Brownian particle in a log-correlated potential"
+    authors:
+      - "Scott Armstrong"
+      - "Ahmed Bou-Rabee"
+      - "Tuomo Kuusi"
+    type: "paper"
+    relationship: "background"
+    note: >-
+      The model, the cutoff coefficients, the homogenized coefficients and the
+      coarse-graining vocabulary are those of this paper (preprint
+      forthcoming), as formalized in subdiffusive-process. The explicit
+      thresholds proved here are not in the paper, whose cascade estimate
+      holds for an unspecified small disorder strength; they do not make
+      explicit the thresholds of the paper's main theorems.
+    author_endorsement: "participated"
+
+related_formalizations:
+  - id: "https://github.com/nitromannitol/subdiffusive-process"
+    relationship: "builds-on"
+    note: >-
+      Supplies the model (GMCModel), the cutoff coefficients and their
+      homogenized coefficients, the normalized defect and the L^p norms used
+      in the statements; pinned as a Lake dependency, with its own pinned
+      dependencies CoarseGraining, MarkovProcess and Mathlib.
+  - id: "https://github.com/scottnarmstrong/CoarseGraining"
+    relationship: "builds-on"
+    note: >-
+      The coarse-graining library of Armstrong and Kuusi: the response
+      functional J, the coarse-grained matrices, Sobolev spaces on cubes and
+      triadic cubes; a dependency of subdiffusive-process.
+
+status:
+  scope: >-
+    Formalized and proved: for d = 2, 3, 4, the explicit cutoff-uniform
+    coarse-graining bounds GMCExplicitDelta.explicit_cascade_two,
+    explicit_cascade_three and explicit_cascade_four (measurability of the
+    normalized defect and of the directional energies, the L^32 bound and the
+    bound on the mean), for every model of subdiffusive-process with disorder
+    strength at most the stated threshold. The library also proves, for any
+    row of parameters in dimension d in {2, 3, 4} satisfying the numeric
+    conditions Row.Obligations, the same bounds with C_32 = D/delta*^2 and
+    C_mean = F/delta*^2 (GMCExplicitDelta.Contract.cascade_of_obligations).
+  sorry_count: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+
+automation:
+  methods:
+    - method: "agent"
+      models:
+        - "claude-opus-5-5"
+        - "claude-sonnet-5-5"
+        - "gpt-6.1-sol"
+      framework: >-
+        Claude Code (Anthropic) and Codex (OpenAI). Claude Opus 5.5
+        coordinated the work: it wrote the proof outline from the authors'
+        notes, planned bounded proof tasks, assigned them to parallel agents,
+        and carried out statement and proof audits. The Lean code was written
+        by GPT-6.1 Sol running in Codex and by Claude Opus 5.5 and Claude
+        Sonnet 5.5 subagents in Claude Code.
+      tool_setup: >-
+        Lake builds with Lean and Mathlib v4.35.0-rc2 and subdiffusive-process
+        at a pinned revision. The main statements were approved by the authors
+        before their proofs; each completed proof of a main statement received
+        a separate audit. The Mathlib-only restatement was checked with
+        leanprover/comparator (Lean kernel and nanoda replay).
+      hardware: "one 16-CPU Linux machine"
+  notes: >-
+    Lean code was written with the listed AI models under the authors'
+    supervision. The Lean kernel checks the formal proofs; the library contains
+    no sorry and no custom axiom.
+
+review:
+  status: "author-approved-statements"
+  reviewers:
+    - "Scott Armstrong"
+  notes: >-
+    The authors approved the main statements. Separate agent reviews checked
+    the statements against the authors' notes and audited the proofs of the
+    main statements. This is not external peer review.
+
+alignment:
+  namespace: "GMCExplicitDelta"
+  statements:
+    - source: "Explicit cascade bound, d = 2 (delta* = 0.36665)"
+      lean: "GMCExplicitDelta.explicit_cascade_two"
+      module: "GMCExplicitDelta.Statements.ExplicitCascadeTwo"
+      status: "proved"
+    - source: "Explicit cascade bound, d = 3 (delta* = 0.18870)"
+      lean: "GMCExplicitDelta.explicit_cascade_three"
+      module: "GMCExplicitDelta.Statements.ExplicitCascadeThree"
+      status: "proved"
+    - source: "Explicit cascade bound, d = 4 (delta* = 0.15698)"
+      lean: "GMCExplicitDelta.explicit_cascade_four"
+      module: "GMCExplicitDelta.Statements.ExplicitCascadeFour"
+      status: "proved"
+
+acknowledgements: >-
+  Built on Lean 4, Mathlib, Lake, the CoarseGraining, MarkovProcess and
+  subdiffusive-process libraries, leanprover/comparator and NanoDa. Scott
+  Armstrong was supported by NSF grants DMS-2000200 and DMS-2350340. Tuomo
+  Kuusi was supported by the Academy of Finland and by the European Research
+  Council (ERC) under the European Union's Horizon 2020 research and
+  innovation programme (grant agreement No 818437).

@@ -1,0 +1,13 @@
+{
+  "challenge_module": "GMCExplicitDeltaAudit.Challenge",
+  "solution_module": "GMCExplicitDeltaAudit.Solution",
+  "theorem_names": [
+    "GMCExplicitDeltaAudit.explicit_cascade"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "enable_nanoda": true
+}

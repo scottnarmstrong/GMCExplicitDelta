@@ -1,0 +1,153 @@
+name: Build and verify
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and axiom audit
+    runs-on: ubuntu-24.04
+    # The first run on an empty cache compiles the source dependencies (subdiffusive-process,
+    # CoarseGraining, MarkovProcess) and the whole library, and may take several hours.
+    timeout-minutes: 360
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Free runner disk space
+        run: |
+          set -Eeuo pipefail
+          if [[ "${RUNNER_ENVIRONMENT:-}" == github-hosted ]]; then
+            sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+            sudo docker image prune --all --force > /dev/null || true
+          fi
+          df -h .
+          available_kib="$(df -Pk . | awk 'NR==2 {print $4}')"
+          test "$available_kib" -ge 20971520
+
+      - name: Set up Lean and Mathlib cache
+        uses: leanprover/lean-action@v1
+        with:
+          build: false
+          use-mathlib-cache: true
+
+      - name: Restore project and dependency build artifacts
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .lake/build
+            .lake/packages/SubdiffusiveProcess/.lake/build
+            .lake/packages/CoarseGraining/.lake/build
+            .lake/packages/MarkovProcess/.lake/build
+          key: lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+            lake-cmp-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # Each Group 4 certificate module needs about 12 GB of memory: compile the certificate modules
+      # one at a time, in dependency order, before the parallel build of the rest of the library.
+      - name: Build the numeric certificates one at a time
+        timeout-minutes: 240
+        run: |
+          set -o pipefail
+          for m in \
+            GMCExplicitDelta.Certificates.Group1Common \
+            GMCExplicitDelta.Certificates.Group1Rows \
+            GMCExplicitDelta.Certificates.Group2Averaging \
+            GMCExplicitDelta.Certificates.Group2History \
+            GMCExplicitDelta.Certificates.Group2Bad \
+            GMCExplicitDelta.Certificates.Group2Four \
+            GMCExplicitDelta.Certificates.Group2Three \
+            GMCExplicitDelta.Certificates.Group2Two \
+            GMCExplicitDelta.Certificates.Group3Haar \
+            GMCExplicitDelta.Certificates.Group3Common \
+            GMCExplicitDelta.Certificates.Group3Barrier \
+            GMCExplicitDelta.Certificates.Group3FourGeo \
+            GMCExplicitDelta.Certificates.Group3FourBar \
+            GMCExplicitDelta.Certificates.Group3TwoGeo \
+            GMCExplicitDelta.Certificates.Group3TwoBar \
+            GMCExplicitDelta.Certificates.Group3ThreeGeo \
+            GMCExplicitDelta.Certificates.Group3ThreeBar \
+            GMCExplicitDelta.Certificates.Group3Rows \
+            GMCExplicitDelta.Certificates.Group4Fixed \
+            GMCExplicitDelta.Certificates.Group4Band \
+            GMCExplicitDelta.Certificates.Group4BandUp \
+            GMCExplicitDelta.Certificates.Group4StageFour \
+            GMCExplicitDelta.Certificates.Group4BandFour \
+            GMCExplicitDelta.Certificates.Group4StageThree \
+            GMCExplicitDelta.Certificates.Group4BandThree \
+            GMCExplicitDelta.Certificates.Group4StageTwo \
+            GMCExplicitDelta.Certificates.Group4BandTwo \
+            GMCExplicitDelta.Certificates.Group4Moment \
+            GMCExplicitDelta.Certificates.Group4Check \
+            GMCExplicitDelta.Certificates.Group4Dnext \
+            GMCExplicitDelta.Certificates.Group4PowerFour \
+            GMCExplicitDelta.Certificates.Group4PowerThree \
+            GMCExplicitDelta.Certificates.Group4PowerTwo \
+            GMCExplicitDelta.Certificates.Group4Ret \
+            GMCExplicitDelta.Certificates.Group4RetFour \
+            GMCExplicitDelta.Certificates.Group4RetThree \
+            GMCExplicitDelta.Certificates.Group4RetTwo \
+            GMCExplicitDelta.Certificates.Group4Rows \
+            GMCExplicitDelta.Certificates.Obligations; do
+            lake build "$m" 2>&1 | tail -n 3
+          done
+
+      # The library must build without `sorry`. Warnings of other kinds (deprecations) are reported
+      # by Lean but do not fail the step.
+      - name: Build the library
+        timeout-minutes: 300
+        run: |
+          set -o pipefail
+          lake build 2>&1 | tee library-build.log
+          # Lean reports "declaration uses `sorry`" (backticks); match any quote character.
+          if grep -E "declaration uses .sorry." library-build.log; then
+            echo "The library build reported a sorry."
+            exit 1
+          fi
+
+      # The comparator challenge and its solution (not a default target). The challenge contains
+      # exactly one intentional statement-level `sorry`.
+      - name: Build the audit library
+        run: |
+          set -o pipefail
+          lake build GMCExplicitDeltaAudit 2>&1 | tee audit-build.log
+          if grep -E "declaration uses .sorry." audit-build.log \
+               | grep -vE "GMCExplicitDeltaAudit/Challenge\.lean:[0-9]+:[0-9]+: declaration uses .sorry."; then
+            echo "A sorry outside the challenge statement was reported."
+            exit 1
+          fi
+
+      - name: Axiom audit
+        run: |
+          set -o pipefail
+          lake env lean GMCExplicitDeltaAudit/AxiomsAudit.lean 2>&1 | tee axioms-audit.log
+          python3 scripts/check_axioms.py axioms-audit.log GMCExplicitDeltaAudit/AxiomsAudit.lean
+
+      - name: Save project and dependency build artifacts
+        if: always() && steps.cache-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .lake/build
+            .lake/packages/SubdiffusiveProcess/.lake/build
+            .lake/packages/CoarseGraining/.lake/build
+            .lake/packages/MarkovProcess/.lake/build
+          key: lake-build-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
