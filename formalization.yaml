@@ -2,7 +2,7 @@
 version: "v0.4"
 
 project:
-  name: "Explicit disorder thresholds for the GMC coarse-graining cascade"
+  name: "Explicit constants for the GMC coarse-graining cascade"
   description: >-
     A Lean 4 formalization of explicit disorder thresholds for the
     cutoff-uniform coarse-graining cascade of the log-correlated (Gaussian
@@ -27,6 +27,8 @@ project:
     - "Scott Armstrong"
     - "Tuomo Kuusi"
   license: "Apache-2.0"
+  funding:
+    - "Scott Armstrong and Tuomo Kuusi were supported by the European Research Council (ERC) under the European Union's Horizon Europe research and innovation programme, grant agreement No. 101200828."
 
 classification:
   arxiv: ["math.PR", "math.AP"]
@@ -132,7 +134,6 @@ alignment:
 acknowledgements: >-
   Built on Lean 4, Mathlib, Lake, the CoarseGraining, MarkovProcess and
   subdiffusive-process libraries, leanprover/comparator and NanoDa. Scott
-  Armstrong was supported by NSF grants DMS-2000200 and DMS-2350340. Tuomo
-  Kuusi was supported by the Academy of Finland and by the European Research
-  Council (ERC) under the European Union's Horizon 2020 research and
-  innovation programme (grant agreement No 818437).
+  Armstrong and Tuomo Kuusi were supported by the European Research Council
+  (ERC) under the European Union's Horizon Europe research and innovation
+  programme, grant agreement No. 101200828.

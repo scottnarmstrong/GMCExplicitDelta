@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this formalization, please cite it as below."
-title: "Explicit disorder thresholds for the coarse-graining cascade of the log-correlated model, formalized in Lean 4"
+title: "GMCExplicitDelta: explicit constants for the coarse-graining cascade of the log-correlated model, formalized in Lean 4"
 type: software
 repository-code: "https://github.com/scottnarmstrong/GMCExplicitDelta"
 abstract: >-
@@ -30,3 +30,26 @@ keywords:
   - renormalization
   - Gaussian multiplicative chaos
 license: Apache-2.0
+references:
+  - type: article
+    title: "Anomalous scaling limit of a Brownian particle in a log-correlated potential"
+    authors:
+      - family-names: Armstrong
+        given-names: Scott
+      - family-names: Bou-Rabee
+        given-names: Ahmed
+      - family-names: Kuusi
+        given-names: Tuomo
+    status: preprint
+    notes: "The paper whose coarse-graining cascade estimate is made explicit here (preprint forthcoming)."
+  - type: software
+    title: "Anomalous scaling limit of a Brownian particle in a log-correlated potential"
+    authors:
+      - family-names: Armstrong
+        given-names: Scott
+      - family-names: Bou-Rabee
+        given-names: Ahmed
+      - family-names: Kuusi
+        given-names: Tuomo
+    repository-code: "https://github.com/nitromannitol/subdiffusive-process"
+    notes: "The Lean formalization of the paper, on which this repository is built."

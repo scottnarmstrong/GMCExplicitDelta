@@ -1,23 +1,36 @@
-# Explicit disorder thresholds for the GMC coarse-graining cascade
+# Explicit constants for the GMC coarse-graining cascade
 
 [![Build and verify](https://github.com/scottnarmstrong/GMCExplicitDelta/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/scottnarmstrong/GMCExplicitDelta/actions/workflows/build.yml)
 [![Comparators](https://github.com/scottnarmstrong/GMCExplicitDelta/actions/workflows/comparators.yml/badge.svg?branch=main)](https://github.com/scottnarmstrong/GMCExplicitDelta/actions/workflows/comparators.yml)
 
-A machine-checked **Lean 4** proof that the coarse-graining cascade of the log-correlated
-(Gaussian multiplicative chaos) model holds with **explicit disorder thresholds** in dimensions
-`d = 2, 3, 4`.
-
-The model is the one of
+This repository is built on top of
+[subdiffusive-process](https://github.com/nitromannitol/subdiffusive-process), the Lean 4
+formalization of
 
 > Scott Armstrong, Ahmed Bou-Rabee and Tuomo Kuusi,
 > *Anomalous scaling limit of a Brownian particle in a log-correlated potential*
-> (preprint forthcoming),
+> (preprint forthcoming).
 
-formalized in the public library
-[subdiffusive-process](https://github.com/nitromannitol/subdiffusive-process), which this
-repository uses as a dependency: every object in the statements below (the model, the cutoff
-coefficient, its homogenized coefficient, the response functional `J` and the normalized defect) is
-the dependency's definition.
+The results of that paper are perturbative: they hold when the disorder strength `δ` of the
+log-correlated potential is small enough, `δ ≤ δ₀`. The paper, and its formalization, prove that
+such a `δ₀` and the accompanying constants exist, but do not compute them. The heart of the argument is a renormalization (coarse-graining) cascade: an
+induction across scales showing that, for every infrared cutoff `m`, the cutoff coefficient `a_m`
+normalized by its homogenized coefficient `ā_m` is close to the identity on every cube above the
+cutoff scale, with an error of order `δ²`.
+
+**The point of this repository is to exhibit explicit values for the perturbative parameter and the
+constants in this cascade estimate.** We prove, in Lean, that it holds for
+
+- `δ ≤ 0.36665` in dimension `d = 2`,
+- `δ ≤ 0.18870` in dimension `d = 3`,
+- `δ ≤ 0.15698` in dimension `d = 4`,
+
+with explicit rational constants (table below). In particular, in two dimensions the cascade holds
+for every disorder strength up to `δ = 0.366`.
+
+The theorems are stated about the objects of subdiffusive-process itself, which is imported as a
+pinned Lake dependency: the model, the cutoff coefficient, its homogenized coefficient, the response
+functional `J` and the normalized defect are all the dependency's definitions.
 
 ## What is proved
 
@@ -172,15 +185,12 @@ needs about 16 GB of memory):
 scripts/verify_comparator.sh
 ```
 
-## Authors and citation
+## Authors, citation, acknowledgements
 
-The Lean development is by **Scott Armstrong**, **Ahmed Bou-Rabee** and **Tuomo Kuusi**.
-To cite it, use [`CITATION.cff`](CITATION.cff).
-
-Funding: Scott Armstrong was supported by NSF grants DMS-2000200 and DMS-2350340, and
-Tuomo Kuusi by the Academy of Finland and by the European Research Council (ERC) under the
-European Union's Horizon 2020 research and innovation programme (grant agreement No
-818437).
+The Lean development is by **Scott Armstrong**, **Ahmed Bou-Rabee** and **Tuomo Kuusi**. To cite it,
+use [`CITATION.cff`](CITATION.cff). Scott Armstrong and Tuomo Kuusi were supported by the European
+Research Council (ERC) under the European Union's Horizon Europe research and innovation programme,
+grant agreement No. 101200828.
 
 ## License
 
