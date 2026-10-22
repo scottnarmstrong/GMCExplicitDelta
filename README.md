@@ -8,8 +8,8 @@ This repository is built on top of
 formalization of
 
 > Scott Armstrong, Ahmed Bou-Rabee and Tuomo Kuusi,
-> *Anomalous scaling limit of a Brownian particle in a log-correlated potential*
-> (preprint forthcoming).
+> *Anomalous scaling limit of a Brownian particle in a log-correlated potential*,
+> [arXiv:2610.12335](https://arxiv.org/abs/2610.12335).
 
 The results of that paper are perturbative: they hold when the disorder strength `δ` of the
 log-correlated potential is small enough, `δ ≤ δ₀`. The paper, and its formalization, prove that

@@ -44,8 +44,8 @@ sources:
     relationship: "background"
     note: >-
       The model, the cutoff coefficients, the homogenized coefficients and the
-      coarse-graining vocabulary are those of this paper (preprint
-      forthcoming), as formalized in subdiffusive-process. The explicit
+      coarse-graining vocabulary are those of this paper
+      (arXiv:2610.12335), as formalized in subdiffusive-process. The explicit
       thresholds proved here are not in the paper, whose cascade estimate
       holds for an unspecified small disorder strength; they do not make
       explicit the thresholds of the paper's main theorems.

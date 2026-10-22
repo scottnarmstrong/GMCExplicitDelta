@@ -41,7 +41,8 @@ references:
       - family-names: Kuusi
         given-names: Tuomo
     status: preprint
-    notes: "The paper whose coarse-graining cascade estimate is made explicit here (preprint forthcoming)."
+    url: "https://arxiv.org/abs/2610.12335"
+    notes: "The paper whose coarse-graining cascade estimate is made explicit here (arXiv:2610.12335)."
   - type: software
     title: "Anomalous scaling limit of a Brownian particle in a log-correlated potential"
     authors:
